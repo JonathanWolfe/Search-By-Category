@@ -76,6 +76,7 @@ To help users find the posts they're looking for faster, this plugin allows them
 2. activate the plugin within you WordPress Administration
 3. Go to Settings > Search By Category
 4. Use the following code in your Theme:
+
 ```
 <?php if (function_exists('sbc')) { 
 	sbc();
@@ -83,7 +84,9 @@ To help users find the posts they're looking for faster, this plugin allows them
 	// Your regular search form code goes here
 <?php } ?>
 ```
+
 or
+
 ```
 [sbc]
 ```
