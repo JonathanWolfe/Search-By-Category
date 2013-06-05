@@ -13,15 +13,15 @@ To help users find the posts they're looking for faster, this plugin allows them
 >  - Fixed automatic category reselect
 > 
 > 2.0.2
->  - Fixed inall_exclude use case failure
+>  - Fixed ```inall_exclude``` use case failure
 > 
 > 2.0.1
 >  - Removes leftover debug code
 > 
 > 2.0
 >  - Exclude from categories from "in all categories"
->  - No drop-down menu when using "only_cat" parameter
->  - Added sbc() controls
+>  - No drop-down menu when using ```only_cat``` parameter
+>  - Added ```sbc()``` controls
 >  - Added shortcode controls
 > 
 > 1.5
@@ -42,7 +42,7 @@ To help users find the posts they're looking for faster, this plugin allows them
 >  - Fixed settings saving issue
 > 
 > 1.2
->  - Included Shortcode: [sbc]
+>  - Included Shortcode: ```[sbc]```
 > 
 > 1.1
 >  - Added security fixes
@@ -76,7 +76,7 @@ To help users find the posts they're looking for faster, this plugin allows them
 2. activate the plugin within you WordPress Administration
 3. Go to Settings > Search By Category
 4. Use the following code in your Theme:
-```php
+```
 <?php if (function_exists('sbc')) { 
 	sbc();
 } else { ?>
@@ -103,8 +103,8 @@ or
 *If you don't want to customize a setting, use: null, 0, or ''.*
 
 ####Example of sbc with all function parameters at default:
-```
-sbc("In all categories", 1, "Search for...", null, null, 0, null);
+```php
+    sbc("In all categories", 1, "Search for...", null, null, 0, null);
 ```
 
 ##Screenshots
