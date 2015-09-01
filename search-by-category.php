@@ -1,11 +1,77 @@
 <?php
 /*
 Plugin Name: Search By Category
-Plugin URI: https://github.com/JonathanWolfe/Search-By-Category/
+Plugin URI: http://fire-studios.com/blog/search-by-category/
 Description: Reconfigures search results to display results based on category of posts.
 Version: 2.0.3
-Author: Jon Wolfe
-Author URI: https://github.com/JonathanWolfe
+Author: Fire G
+Author URI: http://fire-studios.com/blog/
+*/
+
+/* 
+Change log
+
+2.0.3
+ - Fixed automatic category reselect
+
+2.0.2
+ - Fixed inall_exclude use case failure
+
+2.0.1
+ - Removes leftover debug code
+
+2.0
+ - Exclude from categories from "in all categories"
+ - No drop-down menu when using "only_cat" parameter
+ - Added sbc() controls
+ - Added shortcode controls
+
+1.5
+ - Converted options storage from seperate rows to one array
+ - Updated code to be more standardized and readable
+
+1.4.1
+ - XSS security fix (by Manuel Razzari - http://ultimorender.com.ar/funkascript/)
+
+1.4
+ - Search box retains searched value (by Manuel Razzari)
+ - Default style usage on/off fix (by Manuel Razzari)
+
+1.3
+ - Dropdown now automatically selects current category if viewing an archive
+
+1.2.1
+ - Fixed settings saving error
+
+1.2
+ - Included Shortcode: [sbc]
+
+1.1
+ - Added security fixes
+ - Removed some excess code
+
+1.0.0
+ - Default text
+ - Custom styling
+
+Beta 3
+ - Search Text
+ - Exclude Child categories
+ - search box auto empties and refills if nothing entered
+
+Beta 2
+ - First complete working version
+ - Hide Empty
+ - Focus
+ - Exclude Categories
+
+Beta 1
+ - First working version
+ - Category exclustion from drop-down list isn't functional
+
+Alpha 1
+ - All functions are present but independent
+
 */
 
 // Some Defaults
@@ -27,7 +93,7 @@ function sbc_activate(){
         update_option("sbc-settings", $SBC_settings);
     }
     else {
-        // Upgrade from 1.x to 1.5+
+        // Upgrade from 1.x to 1.5
         $SBC_settings['focus']					= get_option('sbc-focus');
         $SBC_settings['hide_empty']				= get_option('sbc-hide-empty');
         $SBC_settings['excluded_cats']			= get_option('sbc-excluded-cats');
@@ -71,9 +137,9 @@ if ( ! class_exists( 'SBC_Admin' ) ) {
 				
 				// Get our new option values
                 $SBC_settings                           = get_option('sbc-settings');
-				$SBC_settings['focus']					= mysql_real_escape_string($_POST['focus']);
+				$SBC_settings['focus']					= $_POST['focus'];
 				$SBC_settings['hide_empty']				= $_POST['hide-empty'];
-				$SBC_settings['search_text']			= mysql_real_escape_string($_POST['search-text']);
+				$SBC_settings['search_text']			= $_POST['search-text'];
 				$SBC_settings['exclude_child']			= $_POST['exclude-child'];
 				$SBC_settings['sbc_style']				= $_POST['sbc-style'];
                 $SBC_settings['inall_exclude']          = $_POST['inall_exclude'];
@@ -93,13 +159,14 @@ if ( ! class_exists( 'SBC_Admin' ) ) {
 				if (empty($SBC_settings['sbc_style'])) $SBC_settings['sbc_style'] = '0'; // 0 means false 
 				
 				// Update the DB with the new option values
+				
 				update_option("sbc-settings", $SBC_settings);
 			}
             
             $SBC_settings           = get_option("sbc-settings");
-			$focus					= $SBC_settings['focus'];
+			$focus					= stripslashes($SBC_settings['focus']);
 			$hide_empty				= $SBC_settings['hide_empty'];
-			$search_text			= $SBC_settings['search_text'];
+			$search_text			= stripslashes($SBC_settings['search_text']);
 			$excluded_cats			= $SBC_settings['excluded_cats'];
 			$exclude_child			= $SBC_settings['exclude_child'];
 			$raw_excluded_cats 		= $SBC_settings['raw_excluded_cats'];
@@ -154,7 +221,7 @@ if ( ! class_exists( 'SBC_Admin' ) ) {
 
 
 // Base function
-function sbc ($focus = null, $hide_empty = null, $search_text = null, $only_cat = null, $excluded_cats = null, $exclude_child = null, $inall_exclude = null) {
+function sbc($focus = null, $hide_empty = null, $search_text = null, $only_cat = null, $excluded_cats = null, $exclude_child = null, $inall_exclude = null) {
     
     $SBC_settings           = get_option("sbc-settings");
     
@@ -167,7 +234,7 @@ function sbc ($focus = null, $hide_empty = null, $search_text = null, $only_cat 
     $exclude_child          = !$exclude_child ? $SBC_settings['exclude_child'] : $exclude_child;
     $inall_exclude          = !$inall_exclude ? ','.$SBC_settings['inall_exclude'] : $inall_exclude;
     
-    if (!$only_cat){
+    if(!$only_cat){
         $cat_id = (int)$_GET['cat'];
         // if $only_cat is still null, use settings from admin menu
         $exclude_setting = $excluded_cats.$inall_exclude;
